@@ -8,8 +8,17 @@
 // }
 
 const Button = ({ text, color, children }) => {
+  // 이벤트 객체
+  const onClickButton = (e) => {
+    console.log(e); // SyntheticBaseEvent (합성 이벤트)
+    console.log(text);
+  }
+
   return (
-    <button style={{ color: color }}>
+    <button 
+      onClick={onClickButton}
+      // onMouseEnter={onClickButton}
+      style={{ color: color }}>
       {text} - {color.toUpperCase()}
       {children}
     </button>
