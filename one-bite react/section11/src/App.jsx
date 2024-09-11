@@ -1,5 +1,5 @@
 import "./App.css";
-import { useRef, useReducer, useCallback } from "react";
+import { useRef, useReducer, useCallback, createContext, useMemo } from "react";
 import Header from "./components/Header";
 import Editor from "./components/Editor";
 import List from "./components/List";
@@ -42,6 +42,10 @@ function reducer(state, action) {
   }
 }
 
+// 컨텍스트 생성은 1번이면 충분하기에 컴포넌트(App) 외부에서 선언한다.
+export const TodoStateContext = createContext()
+export const TodoDispatchContext = createContext()
+
 function App() {
   const [todos, dispatch] = useReducer(reducer, mockData);
   const idRef = useRef(3);
@@ -72,11 +76,19 @@ function App() {
     });
   }, []);
 
+  const memoizedDispatch = useMemo(() => {
+    return {onCreate, onDelete, onUpdate}
+  }, [])
+
   return (
     <div className="App">
       <Header />
-      <Editor onCreate={onCreate} />
-      <List todos={todos} onUpdate={onUpdate} onDelete={onDelete} />
+      <TodoStateContext.Provider value={todos}>
+      <TodoDispatchContext.Provider value={memoizedDispatch}>
+        <Editor/>
+        <List />
+      </TodoDispatchContext.Provider>
+      </TodoStateContext.Provider>
     </div>
   );
 }
